@@ -1,6 +1,8 @@
 # archinstall
 
-My own ready-to-install Arch Linux setup: **Hyprland** (Lua config) + **Noctalia** shell, kitty, starship, adw-gtk3-dark / Yaru icons.
+My own ready-to-install Arch Linux setup: **Hyprland** (Lua config) + **Noctalia** shell, kitty, starship, adw-gtk3-dark / Papirus-Dark icons / Adwaita cursor.
+
+**AUR-free:** everything comes from the official repos except `anydesk-bin` (prebuilt from Chaotic-AUR). No AUR helper is needed.
 
 > **Testing first?** See [EXPERIMENT.md](EXPERIMENT.md) — how to try this in a VM or throwaway user without risking your current apps, logins or Wi-Fi.
 
@@ -27,6 +29,8 @@ Flags: `--no-packages` (only link configs), `--no-system` (skip services/pacman.
 |---|---|---|
 | `config/*` | app configs (hypr, kitty, noctalia, gtk, qt…) | symlinked into `~/.config/` |
 | `config/pipewire/` | echo cancellation + voice tuning for calls ([AUDIO.md](AUDIO.md)) | symlinked into `~/.config/` |
+| `config/{nwg-displays,xfce4,gh,Pinta,gedit}`, `kdeglobals`, `pavucontrol.ini` | monitor profiles, Thunar, gh, Pinta, gedit, KDE/Qt colours, pavucontrol | symlinked into `~/.config/` |
+| `dconf/user.ini` | GTK/GNOME app settings (`dconf dump /`) | loaded with `dconf load /` |
 | `home/.*` | `.bashrc`, `.bash_profile`, `.gtkrc-2.0` | symlinked into `~/` |
 | `wallpapers/` | wallpapers | symlinked to `~/Pictures/Wallpapers` |
 | `packages/pacman.txt` | official packages (+ anydesk-bin from Chaotic-AUR) | `pacman -S` |
@@ -42,3 +46,13 @@ Existing files are moved to `~/.dotfiles-backup/<timestamp>/` before linking.
 ```bash
 pacman -Qqen | grep -vxE 'chaotic-keyring|chaotic-mirrorlist|amd-ucode|vulkan-radeon|xf86-video-amdgpu|xf86-video-ati' > packages/pacman.txt
 ```
+
+## Keeping dconf settings up to date
+
+```bash
+dconf dump / > dconf/user.ini
+```
+
+## Not in this repo (back these up separately)
+
+Secrets and personal data: `~/.ssh`, GPG keys, `~/.local/share/keyrings`, `gh` login (`config/gh/hosts.yml` is git-ignored, run `gh auth login`), browser profiles, Wi-Fi passwords, and your files.

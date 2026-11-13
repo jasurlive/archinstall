@@ -18,3 +18,7 @@ _site/
 Gemfile.lock
 *.bak*
 .dotfiles-backup/
+
+# Linked config dirs that apps also write private/cache data into
+config/gh/hosts.yml
+config/Pinta/addins/

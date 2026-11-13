@@ -94,6 +94,12 @@ link_dotfiles() {
   link "$DOTFILES/wallpapers" "$HOME/Pictures/Wallpapers"
 
   chmod +x "$DOTFILES"/config/hypr/Scripts/*.sh 2>/dev/null || true
+
+  # dconf is a binary database, so it's stored as a text dump and loaded (not linked)
+  if command -v dconf >/dev/null && [[ -f $DOTFILES/dconf/user.ini ]]; then
+    info "Loading dconf settings (GTK/GNOME app preferences)"
+    dconf load / < "$DOTFILES/dconf/user.ini" || warn "dconf load failed (no D-Bus session?) — run it again after login"
+  fi
   [[ -d $BACKUP ]] && warn "Old files were backed up to $BACKUP"
 }
 
