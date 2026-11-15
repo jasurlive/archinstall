@@ -1,21 +1,27 @@
 #!/usr/bin/env bash
-# Arch + Hyprland + Noctalia setup.
+# Arch + Hyprland + hyprminimal setup.
 # Run as your normal user on a fresh Arch install (after archinstall / base setup):
 #   git clone https://github.com/jasurlive/archinstall ~/archinstall && cd ~/archinstall && ./install.sh
 #
 # Flags:
 #   --no-packages   skip package installation (only link configs)
-#   --no-system     skip system tweaks (pacman.conf, services, greetd)
+#   --no-system     skip system tweaks (services, greetd)
+#   --no-autologin  greetd shows the greeter at boot instead of autologin into the lock screen
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 DO_PACKAGES=1
 DO_SYSTEM=1
+DO_AUTOLOGIN=1
+# hyprminimal (bar, launcher, notifications, OSD, lock screen, greeter). The Hyprland config expects it here.
+HYPRMINIMAL_REPO=https://github.com/jasurlive/hyprminimal
+HYPRMINIMAL="$HOME/www/hyprminimal"
 for arg in "$@"; do
   case $arg in
     --no-packages) DO_PACKAGES=0 ;;
     --no-system)   DO_SYSTEM=0 ;;
+    --no-autologin) DO_AUTOLOGIN=0 ;;
     *) echo "Unknown flag: $arg"; exit 1 ;;
   esac
 done
@@ -65,6 +71,29 @@ install_packages() {
   fi
 }
 
+# ---------------------------------------------------------------- hyprminimal
+setup_hyprminimal() {
+  if [[ -d $HYPRMINIMAL/.git ]]; then
+    info "hyprminimal already in ${HYPRMINIMAL/#$HOME/~}, leaving it as is"
+  else
+    info "Cloning hyprminimal into ${HYPRMINIMAL/#$HOME/~}"
+    mkdir -p "$(dirname "$HYPRMINIMAL")"
+    git clone "$HYPRMINIMAL_REPO" "$HYPRMINIMAL"
+  fi
+  chmod +x "$HYPRMINIMAL"/bin/* 2>/dev/null || true
+
+  if (( DO_PACKAGES )); then
+    info "Installing hyprminimal packages (official repos)"
+    # shellcheck disable=SC2046
+    sudo pacman -S --needed --noconfirm $(pkglist "$HYPRMINIMAL/packages.txt")
+  fi
+
+  # hyprminimal's settings.json stores absolute paths (wallpapers, startup commands)
+  if [[ $HOME != /home/jasur ]] && grep -q /home/jasur "$HYPRMINIMAL/settings.json" 2>/dev/null; then
+    sed -i "s|/home/jasur|$HOME|g" "$HYPRMINIMAL/settings.json"
+  fi
+}
+
 # ---------------------------------------------------------------- dotfiles
 # Symlink $1 (in repo) -> $2 (in $HOME), backing up whatever was there.
 link() {
@@ -110,20 +139,43 @@ setup_system() {
     cups.socket fstrim.timer systemd-timesyncd.service
   systemctl --user enable pipewire.socket pipewire-pulse.socket wireplumber.service || true
 
-  # greetd config is kept for reference; login currently happens on tty1 via
-  # ~/.bash_profile (exec start-hyprland). To use the Noctalia greeter instead:
-  #   sudo cp system/greetd/config.toml /etc/greetd/ && sudo systemctl enable greetd
+  setup_login
 
   info "Creating user dirs"
   xdg-user-dirs-update || true
 
   if [[ $SHELL != */bash ]]; then
-    warn "Your login shell is $SHELL; this setup expects bash (it auto-starts Hyprland on tty1)."
+    warn "Your login shell is $SHELL; this setup expects bash."
   fi
+}
+
+# greetd: autologin into the hyprminimal lock screen at boot, hyprminimal greeter after logout
+setup_login() {
+  info "Setting up greetd login (hyprminimal lock screen + greeter)"
+  local conf; conf=$(mktemp)
+  sed "s/@USER@/$USER/g" "$DOTFILES/system/greetd/config.toml" > "$conf"
+  if (( ! DO_AUTOLOGIN )); then
+    awk '/^\[/ { skip = ($0 == "[initial_session]") } !skip' "$conf" > "$conf.new" && mv "$conf.new" "$conf"
+  fi
+  sudo install -Dm644 "$conf" /etc/greetd/config.toml
+  rm -f "$conf"
+
+  if [[ -x $HYPRMINIMAL/bin/hyprminimal-greeter ]]; then
+    sudo "$HYPRMINIMAL/bin/hyprminimal-greeter" install
+  else
+    # older hyprminimal without the greeter: greetd's own text greeter, so login always works
+    warn "hyprminimal greeter not found, using greetd's text greeter (agreety) after logout"
+    sudo sed -i 's|^command = "env XDG_CACHE_HOME=.*|command = "agreety --cmd start-hyprland"|' /etc/greetd/config.toml
+  fi
+
+  # only one display manager can own display-manager.service
+  sudo systemctl disable sddm.service 2>/dev/null || true
+  sudo systemctl enable greetd.service
 }
 
 # ---------------------------------------------------------------- run
 if (( DO_PACKAGES )); then setup_repos; install_packages; fi
+setup_hyprminimal
 link_dotfiles
 if (( DO_PACKAGES )); then
   info "Installing pinned VSCode"
@@ -131,4 +183,8 @@ if (( DO_PACKAGES )); then
 fi
 if (( DO_SYSTEM )); then setup_system; fi
 
-info "Done! Log out and log in on tty1 to start Hyprland."
+if (( DO_AUTOLOGIN )); then
+  info "Done! Reboot: you land on the hyprminimal lock screen, unlock with your password."
+else
+  info "Done! Reboot and log in on the hyprminimal greeter to start Hyprland."
+fi

@@ -47,6 +47,5 @@ hl.config({
 })
 
 
--- For Noctalia Color templates
-require("noctalia").apply_theme()
-
+-- hyprminimal blur rules (safe to remove)
+pcall(dofile, (os.getenv("HOME") or "") .. "/www/hyprminimal/hypr/layerrules.lua")

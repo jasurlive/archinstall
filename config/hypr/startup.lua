@@ -19,7 +19,10 @@ local exec_once = {
     "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 || /usr/libexec/polkit-gnome-authentication-agent-1",
     "gnome-keyring-daemon --start --components=secrets",
     "systemctl --user start --ignore-dependencies xdg-desktop-portal-hyprland.service xdg-desktop-portal.service",
-    "noctalia",
+    -- hyprminimal shell
+    [[sh -c '"$HOME/www/hyprminimal/bin/hyprminimal" start']],
+    "wl-clip-persist --clipboard regular",
+    "sh -c 'sleep 3 && easyeffects --gapplication-service'",
 }
 
 local nvidia_exec_once_optional = {
@@ -46,7 +49,16 @@ if enable_nvidia_optional then
     end
 end
 
+-- hyprminimal autologin: greetd's initial_session starts Hyprland with HYPRMINIMAL_AUTOLOGIN=1 and no
+-- password, so the lock screen comes up first and is the login screen (same look as Super+L).
+-- Logins through the greeter (after logging out) don't set it and aren't locked twice.
+local AUTOLOGIN_LOCK = [[sh -c 'c="$HOME/www/hyprminimal/.generated/hyprlock.conf"; ]]
+    .. [[[ -f "$c" ] || c="$HOME/www/hyprminimal/hyprlock/hyprlock.conf"; exec hyprlock -c "$c"']]
+
 hl.on("hyprland.start", function()
+    if os.getenv("HYPRMINIMAL_AUTOLOGIN") == "1" then
+        hl.exec_cmd(AUTOLOGIN_LOCK)
+    end
     for _, cmd in ipairs(exec_once) do
         hl.exec_cmd(cmd)
     end

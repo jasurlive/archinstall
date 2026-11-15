@@ -29,14 +29,5 @@ fi
 
 sign=$([[ $dir == up ]] && echo + || echo -)
 
-case $kind in
-    volume)
-        wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ "${step}%${sign}"
-        (noctalia msg volume-osd >/dev/null 2>&1 &)
-        ;;
-    brightness)
-        brightnessctl -q set "${step}%${sign}"
-        pct=$(brightnessctl -m | cut -d, -f4 | tr -d %)
-        (noctalia msg brightness-osd "$pct" >/dev/null 2>&1 &)
-        ;;
-esac
+# hyprminimal-msg changes the value and shows the hyprminimal OSD
+"$HOME/www/hyprminimal/bin/hyprminimal-msg" "$kind" "${sign}${step}"

@@ -1,7 +1,15 @@
+# greetd login for Hyprland + hyprminimal. Installed to /etc/greetd/config.toml by install.sh,
+# which replaces @USER@ with your username (and drops [initial_session] with --no-autologin).
 [terminal]
 vt = 1
 
-[default_session]
-command = "/usr/bin/noctalia-greeter-session"
-user = "greeter"
+# boot: log in as @USER@ without a password, then Hyprland shows the hyprminimal lock screen first,
+# so the lock screen is the login screen (config/hypr/startup.lua, HYPRMINIMAL_AUTOLOGIN). Once per boot.
+[initial_session]
+command = "env HYPRMINIMAL_AUTOLOGIN=1 /usr/bin/start-hyprland"
+user = "@USER@"
 
+# after logging out: the hyprminimal greeter (files installed by hyprminimal-greeter install)
+[default_session]
+command = "env XDG_CACHE_HOME=/var/cache/hyprminimal-greeter XDG_DATA_HOME=/var/cache/hyprminimal-greeter XDG_STATE_HOME=/var/cache/hyprminimal-greeter start-hyprland -- -c /usr/local/share/hyprminimal-greeter/hyprland.lua"
+user = "greeter"

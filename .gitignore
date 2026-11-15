@@ -22,3 +22,7 @@ Gemfile.lock
 # Linked config dirs that apps also write private/cache data into
 config/gh/hosts.yml
 config/Pinta/addins/
+
+# Only the HRIR actually used by the virtual-surround sink is tracked
+config/pipewire/hrir/*
+!config/pipewire/hrir/atmos.wav

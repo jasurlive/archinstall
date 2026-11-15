@@ -1,9 +1,9 @@
 local env = {
-    "HYPRCURSOR_THEME,Adwaita",
+    "HYPRCURSOR_THEME,Bibata-Modern-Classic",
     "HYPRCURSOR_SIZE,24",
-    "XCURSOR_THEME,Adwaita",
+    "XCURSOR_THEME,Bibata-Modern-Classic",
     "XCURSOR_SIZE,24",
-    "QT_CURSOR_THEME,Adwaita",
+    "QT_CURSOR_THEME,Bibata-Modern-Classic",
     "QT_CURSOR_SIZE,24",
 }
 
@@ -22,6 +22,31 @@ hl.config({
         resize_on_border = true,
         allow_tearing = false,
         layout = "dwindle",
+        col = {
+            active_border = "rgb(7a88cf)",
+            inactive_border = "rgb(1f2335)",
+        },
+    },
+
+    group = {
+        col = {
+            border_active = "rgb(d7729f)",
+            border_inactive = "rgb(1f2335)",
+            border_locked_active = "rgb(f7768e)",
+            border_locked_inactive = "rgb(1f2335)",
+        },
+        groupbar = {
+            col = {
+                active = "rgb(d7729f)",
+                inactive = "rgb(1f2335)",
+                locked_active = "rgb(f7768e)",
+                locked_inactive = "rgb(1f2335)",
+            },
+            text_color = "rgb(1f2335)",
+            text_color_inactive = "rgb(a9b1d6)",
+            text_color_locked_active = "rgb(1f2335)",
+            text_color_locked_inactive = "rgb(a9b1d6)",
+        },
     },
 
     decoration = {

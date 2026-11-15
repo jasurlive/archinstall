@@ -175,6 +175,10 @@ gitclone() {
     git clone --depth 1  "https://github.com/jasurlive/${repo}.git" && cd "$repo"
 }
 
+gpr() {
+    gh pr create && gh pr merge --merge --delete-branch
+}
+
 alias crack1='sudo airmon-ng start wlp1s0; sudo airodump-ng wlp1s0mon; sudo airodump-ng -d BSSID_CODE_HERE -w ./temp/file_name_here  -c CH wlp1s0mon'
 alias crack2='sudo aireplay-ng -0 10 -a BSSID -c STATION wlp1s0mon'
 alias crack3='sudo  aircrack-ng -w ./hack/txt_file.txt file_name.cap'

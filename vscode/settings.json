@@ -105,5 +105,7 @@
       "**/venv/**": true,
       "**/dist/**": true,
       "**/build/**": true
-    }
+    },
+    "terminal.integrated.mouseWheelScrollSensitivity": 3,
+    "terminal.integrated.gpuAcceleration": "off"
 }

@@ -8,6 +8,7 @@ aspell
 base
 base-devel
 bat
+bibata-cursor-theme
 blueman
 bluez
 bluez-utils
@@ -23,6 +24,7 @@ cups-pk-helper
 ddcutil
 dosfstools
 dunst
+easyeffects
 efibootmgr
 exfatprogs
 fastfetch
@@ -52,6 +54,8 @@ gst-libav
 gst-plugin-pipewire
 gst-plugins-good
 gst-plugins-ugly
+gtk4
+gtk4-layer-shell
 gutenprint
 gvfs
 gvfs-afc
@@ -63,6 +67,7 @@ hostapd
 hplip
 hspell
 htop
+humanity-icon-theme
 hunspell
 hypridle
 hyprland
@@ -73,6 +78,7 @@ imagemagick
 kitty
 less
 lib32-libpulse
+libadwaita
 libgepub
 libgsf
 libopenraw
@@ -81,7 +87,6 @@ libvoikko
 linux
 linux-firmware
 loupe
-matugen
 meson
 mkinitcpio
 mpv
@@ -89,7 +94,6 @@ nano
 networkmanager
 network-manager-applet
 ninja
-noctalia
 nodejs
 noto-fonts
 noto-fonts-emoji
@@ -99,6 +103,7 @@ nuspell
 nwg-displays
 nwg-look
 os-prober
+papirus-folders
 papirus-icon-theme
 pavucontrol
 pciutils
@@ -113,6 +118,7 @@ pocl
 polkit-gnome
 poppler-glib
 power-profiles-daemon
+python-gobject
 python-pip
 python-pyqt5
 python-pyqt6
@@ -147,6 +153,8 @@ ttf-carlito
 ttf-dejavu
 ttf-jetbrains-mono-nerd
 ttf-liberation
+ttf-ms-fonts
+ttf-symbola
 tumbler
 unrar
 unzip
@@ -155,6 +163,7 @@ wakeonlan
 wget
 wireplumber
 wireshark-cli
+wl-clip-persist
 wlsunset
 wofi
 wpa_supplicant
@@ -162,5 +171,6 @@ xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
 xdg-user-dirs
 xdg-utils
+yaru-icon-theme
 zip
 zoxide

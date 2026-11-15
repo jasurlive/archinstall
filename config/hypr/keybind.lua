@@ -7,6 +7,7 @@ local BROWSER = scrPath .. "/browser-launcher.sh"
 local WORKSPACE = scrPath .. "/workspace.sh"
 local SATTY = scrPath .. "/satty.sh"
 local VIDEO = scrPath .. "/video.sh"
+local SHELLMSG = (os.getenv("HOME") or "") .. "/www/hyprminimal/bin/hyprminimal-msg"
 
 local KEY = {
 	TERMINAL = ("%s + SPACE"):format(mainMod),
@@ -66,11 +67,11 @@ hl.bind(KEY.BROWSER, hl.dsp.exec_cmd(BROWSER), { description = "Browser" })
 hl.bind(KEY.VIDEO, hl.dsp.exec_cmd(VIDEO), { description = "Video player" })
 hl.bind(KEY.MUSIC, hl.dsp.exec_cmd("quodlibet"), { description = "Music player" })
 
--- 2. Noctalia
-hl.bind(KEY.LAUNCHER, hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"), { description = "Toggle launcher" })
-hl.bind(KEY.LOCK, hl.dsp.exec_cmd("noctalia msg session lock"), { description = "Lock screen" })
-hl.bind(KEY.SETTINGS, hl.dsp.exec_cmd("noctalia msg settings-toggle"), { description = "Toggle settings" })
-hl.bind(KEY.CHEATSHEET_TOGGLE, hl.dsp.exec_cmd("noctalia msg panel-toggle kenn/keybind-cheatsheet:cheatsheet"), { description = "Toggle cheatsheet" })
+-- 2. Shell (hyprminimal)
+hl.bind(KEY.LAUNCHER, hl.dsp.exec_cmd(SHELLMSG .. " launcher"), { description = "Toggle launcher" })
+hl.bind(KEY.LOCK, hl.dsp.exec_cmd(SHELLMSG .. " lock"), { description = "Lock screen" })
+hl.bind(KEY.SETTINGS, hl.dsp.exec_cmd(SHELLMSG .. " settings"), { description = "Toggle settings" })
+hl.bind(KEY.CHEATSHEET_TOGGLE, hl.dsp.exec_cmd(SHELLMSG .. " cheatsheet"), { description = "Toggle cheatsheet" })
 
 -- 3. Window Management
 hl.bind(KEY.CLOSE, hl.dsp.window.close(), { description = "Close window" })
@@ -88,15 +89,15 @@ hl.bind(KEY.FOCUS_DOWN, hl.dsp.focus({ direction = "down" }), { description = "F
 
 hl.bind("ALT + tab", hl.dsp.window.cycle_next(), { description = "Cycle windows" })
 
-hl.bind(KEY.RESIZE_RIGHT, function() hl.exec_cmd("hyprctl dispatch resizeactive 30 0") end, { description = "Resize window right" })
-hl.bind(KEY.RESIZE_LEFT, function() hl.exec_cmd("hyprctl dispatch resizeactive -30 0") end, { description = "Resize window left" })
-hl.bind(KEY.RESIZE_UP, function() hl.exec_cmd("hyprctl dispatch resizeactive 0 -30") end, { description = "Resize window up" })
-hl.bind(KEY.RESIZE_DOWN, function() hl.exec_cmd("hyprctl dispatch resizeactive 0 30") end, { description = "Resize window down" })
+hl.bind(KEY.RESIZE_RIGHT, hl.dsp.window.resize({ x = 30, y = 0, relative = true }), { description = "Resize window right" })
+hl.bind(KEY.RESIZE_LEFT, hl.dsp.window.resize({ x = -30, y = 0, relative = true }), { description = "Resize window left" })
+hl.bind(KEY.RESIZE_UP, hl.dsp.window.resize({ x = 0, y = -30, relative = true }), { description = "Resize window up" })
+hl.bind(KEY.RESIZE_DOWN, hl.dsp.window.resize({ x = 0, y = 30, relative = true }), { description = "Resize window down" })
 
-hl.bind(KEY.MOVE_SWAP_LEFT, function() hl.exec_cmd("bash -c 'grep -q true <<< $(hyprctl activewindow -j | jq -r .floating) && hyprctl dispatch moveactive -30 0 || hyprctl dispatch movewindow l'") end, { description = "Move or swap window left" })
-hl.bind(KEY.MOVE_SWAP_RIGHT, function() hl.exec_cmd("bash -c 'grep -q true <<< $(hyprctl activewindow -j | jq -r .floating) && hyprctl dispatch moveactive 30 0 || hyprctl dispatch movewindow r'") end, { description = "Move or swap window right" })
-hl.bind(KEY.MOVE_SWAP_UP, function() hl.exec_cmd("bash -c 'grep -q true <<< $(hyprctl activewindow -j | jq -r .floating) && hyprctl dispatch moveactive 0 -30 || hyprctl dispatch movewindow u'") end, { description = "Move or swap window up" })
-hl.bind(KEY.MOVE_SWAP_DOWN, function() hl.exec_cmd("bash -c 'grep -q true <<< $(hyprctl activewindow -j | jq -r .floating) && hyprctl dispatch moveactive 0 30 || hyprctl dispatch movewindow d'") end, { description = "Move or swap window down" })
+hl.bind(KEY.MOVE_SWAP_LEFT, hl.dsp.exec_cmd(scrPath .. "/move-or-swap.sh l"), { description = "Move or swap window left" })
+hl.bind(KEY.MOVE_SWAP_RIGHT, hl.dsp.exec_cmd(scrPath .. "/move-or-swap.sh r"), { description = "Move or swap window right" })
+hl.bind(KEY.MOVE_SWAP_UP, hl.dsp.exec_cmd(scrPath .. "/move-or-swap.sh u"), { description = "Move or swap window up" })
+hl.bind(KEY.MOVE_SWAP_DOWN, hl.dsp.exec_cmd(scrPath .. "/move-or-swap.sh d"), { description = "Move or swap window down" })
 
 -- 5. Screenshots
 hl.bind("SUPER + PRINT", hl.dsp.exec_cmd("HYPRSHOT_DIR=~/Pictures/Screenshots hyprshot -m window"), { description = "Screenshot window" })
@@ -134,9 +135,9 @@ hl.bind(KEY.MOUSE_RESIZE, hl.dsp.window.resize(), { mouse = true, description = 
 hl.bind(KEY.RESIZE_MODE, hl.dsp.window.resize(), { description = "Resize mode" })
 
 -- 11. Media
-hl.bind("XF86AudioPlay",        hl.dsp.exec_cmd("noctalia msg media toggle"), { locked = true, description = "Play or pause" })
-hl.bind("XF86AudioNext",        hl.dsp.exec_cmd("noctalia msg media next"),       { locked = true, description = "Next track" })
-hl.bind("XF86AudioPrev",        hl.dsp.exec_cmd("noctalia msg media previous"),   { locked = true, description = "Previous track" })
+hl.bind("XF86AudioPlay",        hl.dsp.exec_cmd(SHELLMSG .. " media toggle"), { locked = true, description = "Play or pause" })
+hl.bind("XF86AudioNext",        hl.dsp.exec_cmd(SHELLMSG .. " media next"),       { locked = true, description = "Next track" })
+hl.bind("XF86AudioPrev",        hl.dsp.exec_cmd(SHELLMSG .. " media previous"),   { locked = true, description = "Previous track" })
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(scrPath .. "/accel-step.sh volume up"),   { locked = true, repeating = true, description = "Volume up (hold to accelerate)" })
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(scrPath .. "/accel-step.sh volume down"), { locked = true, repeating = true, description = "Volume down (hold to accelerate)" })
 
@@ -155,6 +156,6 @@ hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(scrPath .. "/accel-step.sh bright
 hl.bind("PRINT", hl.dsp.exec_cmd("hyprshot -m region"))
 
 -- 14. Toggle of bar SUPER+S
-hl.bind("SUPER+S", hl.dsp.exec_cmd("noctalia msg panel-toggle control-center"))
+hl.bind("SUPER+S", hl.dsp.exec_cmd(SHELLMSG .. " control-center"))
 
 return true

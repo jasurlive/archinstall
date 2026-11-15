@@ -41,7 +41,7 @@ sudo pacman -S --needed qemu-full virt-manager   # one-time, on your real machin
    sudo pacman -S --needed git
    git clone https://github.com/jasurlive/archinstall ~/archinstall
    cd ~/archinstall && ./install.sh
-   reboot          # log in on tty1 → Hyprland + Noctalia
+   reboot          # hyprminimal lock screen → unlock → Hyprland + hyprminimal
    ```
 4. Break it, wipe the VM, repeat. Your real machine never sees any of it.
 
@@ -49,7 +49,7 @@ sudo pacman -S --needed qemu-full virt-manager   # one-time, on your real machin
 
 ## Option B — Throwaway user on THIS machine (config-only, no packages)
 
-Tests only the **config linking** (Hyprland/kitty/Noctalia/VSCode settings),
+Tests only the **config linking** (Hyprland/kitty/hyprminimal/VSCode settings),
 not package install or services. Safe because a second user has a separate
 `$HOME`; your own `~`, keyring, browsers and Wi-Fi are untouched.
 
